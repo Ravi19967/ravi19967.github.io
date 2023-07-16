@@ -36,6 +36,7 @@ Work experience
   
 * Jan 2019 - Jun 2019: Intern @ MAQ Software
   * Developed Power BI dashboards and data pipelines
+  
 Skills
 ======
 * C, Python, SQL and Java
