@@ -15,7 +15,10 @@ Education
 
 Work experience
 ======
-* Jan 2022 - Present: Data Engineer @ Doodle
+* Nov 2023 - Present: Data Engineer @ PowerCo
+  * Work on developing data pipelines using Spark on Databricks
+  
+* Jan 2022 - Oct 2023: Data Engineer @ Doodle
   * Researched and Implemented ZSTD compression method in data lake over snappy saving 35% in storage cost, 30% in data scan cost for Athena. All resulting in 20% faster queries
   * Created a Data Model for millions of daily records ingestion from kafka events for frontend activity on doodle’s website. This powers user churn and conversion analysis and feature activations
   * Created a scalable solution for ingestion of user activity from kafka topics to database using kafka connect and airflow which empowered in simplifying the dataflow and helped tracking user’s lifetime value
