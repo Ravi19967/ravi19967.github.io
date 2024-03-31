@@ -23,7 +23,7 @@ Here is a logical flow of relationship between various concepts inside parquet f
 [File Metadata](https://github.com/apache/parquet-format/blob/e517ac4dbe08d518eb5c2e58576d4c711973db94/src/main/thrift/parquet.thrift#L1109-L1166) in parquet refers to the definiton of the following attributes:
 - Version: This **required** field defines the version of parquet format that is being used by the tool that is writing parquet file. This is important to understand compatibility of files within in a group of files
 - Schema: This **required** field defines the schema that contains the metadata for all columns. Since parquet supports nested structures. It follows a depth first search approach and converts all paths to a list of [schema element type](https://github.com/apache/parquet-format/blob/e517ac4dbe08d518eb5c2e58576d4c711973db94/src/main/thrift/parquet.thrift#L408-L468). The column metadata contains the path in the schema for that column which can be used to map columns to nodes in the schema. The first element is the root node that doesn't correspond to any data.
-```python
+```
 ## For example if we have a data structure of the following nature
 root:
     field_1:
