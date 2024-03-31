@@ -93,7 +93,7 @@ Embedded types do not have type-specific orderings and hence are rarely uses. Us
 Here we discuss how LIST and MAP are used to encode nested types by adding group levels around repeated fields that are not present in the data.
 - LIST: LIST always has a 3-level structure
     - Generic structure:
-    ```c
+    ```
     <list-repetition> group <name> (LIST) {
     repeated group list {
         <element-repetition> <element-type> element;
@@ -104,7 +104,7 @@ Here we discuss how LIST and MAP are used to encode nested types by adding group
     - The middle level, named list, is a repeated group with a single field named element.
     - The element field encodes the list's element type and repetition. Element repetition is either required or optional.
     - Example list:
-    ```c
+    ```
     nullable list of List<List<Integer>> with non-nullable values
     optional group array_of_arrays (LIST) {
     repeated group list {
@@ -118,7 +118,7 @@ Here we discuss how LIST and MAP are used to encode nested types by adding group
     ```
 - MAPS: MAPS should be interpreted as a map from keys to values. It has a 3-level structure:
     - Generic structure:
-    ```c
+    ```
     <map-repetition> group <name> (MAP) {
         repeated group key_value {
             required <key-type> key;
@@ -131,7 +131,7 @@ Here we discuss how LIST and MAP are used to encode nested types by adding group
     - The key field encodes the map's key type. This field must have repetition required and must always be present.
     - The value field encodes the map's value type and repetition. This field can be required, optional, or omitted.
     - Example non-null map from strings to nullable integers:
-    ```c
+    ```
     // Map<String, Integer>
     required group my_map (MAP) {
         repeated group key_value {
