@@ -23,21 +23,21 @@ Here is a logical flow of relationship between various concepts inside parquet f
 [File Metadata](https://github.com/apache/parquet-format/blob/e517ac4dbe08d518eb5c2e58576d4c711973db94/src/main/thrift/parquet.thrift#L1109-L1166) in parquet refers to the definiton of the following attributes:
 - Version: This **required** field defines the version of parquet format that is being used by the tool that is writing parquet file. This is important to understand compatibility of files within in a group of files
 - Schema: This **required** field defines the schema that contains the metadata for all columns. Since parquet supports nested structures. It follows a depth first search approach and converts all paths to a list of [schema element type](https://github.com/apache/parquet-format/blob/e517ac4dbe08d518eb5c2e58576d4c711973db94/src/main/thrift/parquet.thrift#L408-L468). The column metadata contains the path in the schema for that column which can be used to map columns to nodes in the schema. The first element is the root node that doesn't correspond to any data.
-```
-## For example if we have a data structure of the following nature
-root:
-    field_1:
-        field_2: 'en-us'
-    field_3:
-        field_4: 'en'
+    ```
+    ## For example if we have a data structure of the following nature
+    root:
+        field_1:
+            field_2: 'en-us'
+        field_3:
+            field_4: 'en'
 
-## The schema tree would look like the following:
-      root
-      /  \
- field_1 field_3
-    /      \
-field_3   field_4
-```
+    ## The schema tree would look like the following:
+        root
+        /  \
+    field_1 field_3
+        /      \
+    field_3   field_4
+    ```
 - num_rows: This **required** field defines the number of rows of data present in the file. This information can be used to return count over files in spark but depends on the processing engine.
 - row_groups: This **required** field defines the number of horizontal partitioning data into rows. There is no physical structure that is guaranteed for a row group. Map Reduce operations are based on the grain of row groups.
 - key_value_metadata: Key value metadata is an **optional** field that can be used to add custom information. This can be used to document your dataset
@@ -93,53 +93,53 @@ Embedded types do not have type-specific orderings and hence are rarely uses. Us
 Here we discuss how LIST and MAP are used to encode nested types by adding group levels around repeated fields that are not present in the data.
 - LIST: LIST always has a 3-level structure
     - Generic structure:
-    ```
-    <list-repetition> group <name> (LIST) {
-    repeated group list {
-        <element-repetition> <element-type> element;
+        ```
+        <list-repetition> group <name> (LIST) {
+        repeated group list {
+            <element-repetition> <element-type> element;
+            }
         }
-    }
-    ```
+        ```
     - The outer-most level is a group annotated with LIST that contains a single field named list. The repetition of this level is either optional or required and determines whether the list is nullable.
     - The middle level, named list, is a repeated group with a single field named element.
     - The element field encodes the list's element type and repetition. Element repetition is either required or optional.
     - Example list:
-    ```
-    nullable list of List<List<Integer>> with non-nullable values
-    optional group array_of_arrays (LIST) {
-    repeated group list {
-        required group element (LIST) {
+        ```
+        nullable list of List<List<Integer>> with non-nullable values
+        optional group array_of_arrays (LIST) {
         repeated group list {
-            required int32 element;
+            required group element (LIST) {
+            repeated group list {
+                required int32 element;
+                    }
                 }
             }
         }
-    }
-    ```
+        ```
 - MAPS: MAPS should be interpreted as a map from keys to values. It has a 3-level structure:
     - Generic structure:
-    ```
-    <map-repetition> group <name> (MAP) {
-        repeated group key_value {
-            required <key-type> key;
-            <value-repetition> <value-type> value;
+        ```
+        <map-repetition> group <name> (MAP) {
+            repeated group key_value {
+                required <key-type> key;
+                <value-repetition> <value-type> value;
+            }
         }
-    }
-    ```
+        ```
     - The outer-most level must be a group annotated with MAP that contains a single field named key_value. The repetition of this level must be either optional or required and determines whether the list is nullable.
     - The middle level, named key_value, must be a repeated group with a key field for map keys and, optionally, a value field for map values.
     - The key field encodes the map's key type. This field must have repetition required and must always be present.
     - The value field encodes the map's value type and repetition. This field can be required, optional, or omitted.
     - Example non-null map from strings to nullable integers:
-    ```
-    // Map<String, Integer>
-    required group my_map (MAP) {
-        repeated group key_value {
-            required binary key (UTF8);
-            optional int32 value;
+        ```
+        // Map<String, Integer>
+        required group my_map (MAP) {
+            repeated group key_value {
+                required binary key (UTF8);
+                optional int32 value;
+            }
         }
-    }
-    ```
+        ```
     - If there are multiple key-value pairs for the same key, then the final value for that key must be the last value. This is an important point, that means in parquet we read all keys before we decide on the value to infer, which can have a bit of cost when reading hundereds of keys.
 
 #### UNKNOWN (always null)
